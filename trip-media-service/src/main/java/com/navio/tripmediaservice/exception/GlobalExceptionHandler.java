@@ -1,4 +1,4 @@
-package com.navio.trip.exception;
+package com.navio.tripmediaservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

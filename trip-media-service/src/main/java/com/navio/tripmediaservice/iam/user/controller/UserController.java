@@ -1,10 +1,10 @@
-package com.navio.trip.iam.user.controller;
+package com.navio.tripmediaservice.iam.user.controller;
 
-import com.navio.trip.iam.user.dto.PreferenceUpdateRequest;
-import com.navio.trip.iam.user.dto.ProfileUpdateRequest;
-import com.navio.trip.iam.user.dto.UserResponse;
-import com.navio.trip.iam.user.dto.UserSyncRequest;
-import com.navio.trip.iam.user.service.UserService;
+import com.navio.tripmediaservice.iam.user.dto.PreferenceUpdateRequest;
+import com.navio.tripmediaservice.iam.user.dto.ProfileUpdateRequest;
+import com.navio.tripmediaservice.iam.user.dto.UserResponse;
+import com.navio.tripmediaservice.iam.user.dto.UserSyncRequest;
+import com.navio.tripmediaservice.iam.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

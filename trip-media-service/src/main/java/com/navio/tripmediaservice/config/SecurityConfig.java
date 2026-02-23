@@ -1,4 +1,4 @@
-package com.navio.trip.config;
+package com.navio.tripmediaservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

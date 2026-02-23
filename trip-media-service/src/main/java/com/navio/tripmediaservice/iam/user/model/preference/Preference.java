@@ -1,6 +1,7 @@
-package com.navio.trip.iam.user.model.preference;
+package com.navio.tripmediaservice.iam.user.model.preference;
 
-import com.navio.trip.iam.user.model.notification.Notification;
+
+import com.navio.tripmediaservice.iam.user.model.notification.Notification;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

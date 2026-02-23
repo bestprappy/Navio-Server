@@ -1,14 +1,14 @@
-package com.navio.trip.iam.user.service;
+package com.navio.tripmediaservice.iam.user.service;
 
-import com.navio.trip.exception.ResourceNotFoundException;
-import com.navio.trip.iam.user.dto.PreferenceUpdateRequest;
-import com.navio.trip.iam.user.dto.ProfileUpdateRequest;
-import com.navio.trip.iam.user.dto.UserResponse;
-import com.navio.trip.iam.user.dto.UserSyncRequest;
-import com.navio.trip.iam.user.model.preference.Preference;
-import com.navio.trip.iam.user.model.user.User;
-import com.navio.trip.iam.user.repository.UserRepository;
-import com.navio.trip.iam.user.util.UserMapper;
+import com.navio.tripmediaservice.exception.ResourceNotFoundException;
+import com.navio.tripmediaservice.iam.user.dto.PreferenceUpdateRequest;
+import com.navio.tripmediaservice.iam.user.dto.ProfileUpdateRequest;
+import com.navio.tripmediaservice.iam.user.dto.UserResponse;
+import com.navio.tripmediaservice.iam.user.dto.UserSyncRequest;
+import com.navio.tripmediaservice.iam.user.model.preference.Preference;
+import com.navio.tripmediaservice.iam.user.model.user.User;
+import com.navio.tripmediaservice.iam.user.repository.UserRepository;
+import com.navio.tripmediaservice.iam.user.util.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

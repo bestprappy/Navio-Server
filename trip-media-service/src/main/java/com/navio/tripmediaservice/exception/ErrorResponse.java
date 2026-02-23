@@ -1,4 +1,4 @@
-package com.navio.trip.exception;
+package com.navio.tripmediaservice.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

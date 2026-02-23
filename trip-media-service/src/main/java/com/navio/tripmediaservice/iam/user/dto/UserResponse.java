@@ -1,8 +1,8 @@
-package com.navio.trip.iam.user.dto;
+package com.navio.tripmediaservice.iam.user.dto;
 
-import com.navio.trip.iam.user.model.preference.Preference;
-import com.navio.trip.iam.user.model.user.UserRole;
-import com.navio.trip.iam.user.model.user.UserStatus;
+import com.navio.tripmediaservice.iam.user.model.preference.Preference;
+import com.navio.tripmediaservice.iam.user.model.user.UserRole;
+import com.navio.tripmediaservice.iam.user.model.user.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.navio.trip.iam.user.repository;
+package com.navio.tripmediaservice.iam.user.repository;
 
-import com.navio.trip.iam.user.model.user.User;
+import com.navio.tripmediaservice.iam.user.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

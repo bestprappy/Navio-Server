@@ -1,4 +1,4 @@
-package com.navio.trip.iam.user.model.notification;
+package com.navio.tripmediaservice.iam.user.model.notification;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

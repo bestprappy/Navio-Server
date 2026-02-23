@@ -1,6 +1,7 @@
-package com.navio.trip.iam.user.model.user;
+package com.navio.tripmediaservice.iam.user.model.user;
 
-import com.navio.trip.iam.user.model.preference.Preference;
+
+import com.navio.tripmediaservice.iam.user.model.preference.Preference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

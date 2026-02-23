@@ -1,4 +1,4 @@
-package com.navio.trip.iam.user.dto;
+package com.navio.tripmediaservice.iam.user.dto;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

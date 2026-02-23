@@ -1,4 +1,4 @@
-package com.navio.trip.iam.user.model.user;
+package com.navio.tripmediaservice.iam.user.model.user;
 
 public enum UserStatus {
     active,

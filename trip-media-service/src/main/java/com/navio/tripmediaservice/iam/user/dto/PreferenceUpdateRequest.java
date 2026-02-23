@@ -1,8 +1,9 @@
-package com.navio.trip.iam.user.dto;
+package com.navio.tripmediaservice.iam.user.dto;
 
-import com.navio.trip.iam.user.model.notification.Notification;
-import com.navio.trip.iam.user.model.preference.DistanceUnit;
-import com.navio.trip.iam.user.model.preference.Theme;
+
+import com.navio.tripmediaservice.iam.user.model.notification.Notification;
+import com.navio.tripmediaservice.iam.user.model.preference.DistanceUnit;
+import com.navio.tripmediaservice.iam.user.model.preference.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

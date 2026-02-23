@@ -1,7 +1,7 @@
-package com.navio.trip.iam.user.util;
+package com.navio.tripmediaservice.iam.user.util;
 
-import com.navio.trip.iam.user.dto.UserResponse;
-import com.navio.trip.iam.user.model.user.User;
+import com.navio.tripmediaservice.iam.user.dto.UserResponse;
+import com.navio.tripmediaservice.iam.user.model.user.User;
 
 /**
  * Maps between User entity and DTOs.

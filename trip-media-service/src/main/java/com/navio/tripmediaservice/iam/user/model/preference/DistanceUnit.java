@@ -1,4 +1,4 @@
-package com.navio.trip.iam.user.model.preference;
+package com.navio.tripmediaservice.iam.user.model.preference;
 
 public enum DistanceUnit {
     MILES,
