@@ -57,10 +57,12 @@ public class User {
     private String avatarUrl;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "role", nullable = false, columnDefinition = "iam.enum_user_role")
     private UserRole role = UserRole.user;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false, columnDefinition = "iam.enum_user_status")
     private UserStatus status = UserStatus.active;
 

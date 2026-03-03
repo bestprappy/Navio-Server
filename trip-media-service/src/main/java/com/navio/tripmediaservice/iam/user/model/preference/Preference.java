@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Objects;
 
 @Setter
@@ -17,7 +16,7 @@ public class Preference implements Serializable {
 
     private Theme theme = Theme.LIGHT;
     private DistanceUnit distanceUnit = DistanceUnit.MILES;
-    private Locale locale = Locale.US;
+    private String locale = "en-US";
     private Notification notifications = new Notification();
 
     @Override

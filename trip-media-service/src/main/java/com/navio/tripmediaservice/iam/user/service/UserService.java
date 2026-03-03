@@ -39,7 +39,7 @@ public class UserService {
                     return newUser;
                 });
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.saveAndFlush(user);
         return UserMapper.toResponse(saved);
     }
 
@@ -79,7 +79,7 @@ public class UserService {
             user.setBio(request.getBio());
         }
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.saveAndFlush(user);
         return UserMapper.toResponse(saved);
     }
 
@@ -110,7 +110,7 @@ public class UserService {
         }
 
         user.setPreferences(prefs);
-        User saved = userRepository.save(user);
+        User saved = userRepository.saveAndFlush(user);
         return UserMapper.toResponse(saved);
     }
 }

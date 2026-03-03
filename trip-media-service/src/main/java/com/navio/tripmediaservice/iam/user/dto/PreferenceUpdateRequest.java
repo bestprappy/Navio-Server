@@ -9,8 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Locale;
-
 /**
  * Request body for {@code PATCH /v1/me/preferences}.
  * All fields are optional — only non-null fields are applied.
@@ -23,6 +21,6 @@ public class PreferenceUpdateRequest {
 
     private Theme theme;
     private DistanceUnit distanceUnit;
-    private Locale locale;
+    private String locale;
     private Notification notifications;
 }

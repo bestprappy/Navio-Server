@@ -15,7 +15,6 @@ spring:
     properties:
       hibernate:
         default_schema: iam
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
   # Keycloak JWT validation
