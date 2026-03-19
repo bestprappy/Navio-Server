@@ -1,3 +1,4 @@
-[submodule "trip-media-service"]
-	path = trip-media-service
+[submodule "Trip-Media-Service"]
+	path = Trip-Media-Service
 	url = https://github.com/bestprappy/Trip-Media-Service.git
+
