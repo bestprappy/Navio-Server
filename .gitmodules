@@ -1,3 +1,6 @@
-[submodule "Trip-Media-Service"]
-	path = Trip-Media-Service
-	url = https://github.com/bestprappy/Trip-Media-Service.git
+[submodule "user-management-service"]
+	path = user-management-service
+	url = https://github.com/bestprappy/User-Management-Service.git
+[submodule "trip-planning-service"]
+	path = trip-planning-service
+	url = https://github.com/bestprappy/Trip-Planning-Service.git
