@@ -10,7 +10,7 @@ Keycloak and NGINX remain non-Spring platform components. NGINX is the productio
 | --- | ---: | --- | --- | --- |
 | User Management Service | 8081 | `user-management-service/` | `iam` | Application VM |
 | Trip Planning Service | 8082 | `trip-planning-service/` | `trip` | Application VM |
-| Mobility & EV Service | 8083 | `mobility-service/` | `ev` | Application VM |
+| Mobility & EV Service | 8083 | `mobility-and-ev-service/` | `ev` | Application VM |
 | Community Service | 8084 | `community-service/` | `social`, `notif`, `media` | Application VM |
 | AI Planning Service | 8085 | `ai-planning-service/` | `ai` | ML VM with Ollama, or application VM with hosted provider |
 
@@ -31,7 +31,7 @@ Production:  Client ──> NGINX :80/:443 ──> Spring Cloud Gateway :8080
 Spring Cloud Gateway + Eureka
   ├── /v1/users, /v1/admin/users                              → USER-MANAGEMENT-SERVICE :8081
   ├── /v1/trips, /v1/public-trips, /v1/share                  → TRIP-PLANNING-SERVICE :8082
-  ├── /v1/places, /v1/routes, /v1/geo, /v1/ev, /v1/chargers  → MOBILITY-SERVICE :8083
+  ├── /v1/places, /v1/routes, /v1/geo, /v1/ev, /v1/chargers  → MOBILITY-AND-EV-SERVICE :8083
   ├── /v1/community, /v1/groups, /v1/posts,
   │   /v1/feed, /v1/notifications, /v1/media                   → COMMUNITY-SERVICE :8084
   └── /v1/ai                                                   → AI-PLANNING-SERVICE :8085
@@ -49,6 +49,8 @@ Only NGINX is public in production. Gateway, Config Server, Eureka, Actuator, te
 6. Start NGINX for production ingress and verify telemetry delivery.
 
 The Config Git repository contains non-secret settings only. Database passwords, Keycloak credentials, provider tokens, and cryptographic material remain environment or mounted secrets.
+
+Mobility & EV reads Google Places/Routes credentials from `GOOGLE_MAPS_SERVER_API_KEY`. This server key must be different from the client's `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, restricted to the Places API (New) and Routes API, and restricted to the deployment server's outbound IP where practical. Provider base URLs, timeouts, cache lifetimes, and circuit-breaker thresholds remain in Config Server.
 
 ## Authentication and user management
 

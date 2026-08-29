@@ -1,0 +1,139 @@
+spring:
+  datasource:
+    url: ${MOBILITY_DB_URL:jdbc:postgresql://localhost:5432/tripplanner}
+    username: ${MOBILITY_DB_USERNAME:tripplanner}
+    password: ${MOBILITY_DB_PASSWORD:tripplanner}
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
+    properties:
+      hibernate:
+        default_schema: ev
+        format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: ev
+    default-schema: ev
+    create-schemas: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=15m
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: mobility-and-ev-service
+      auto-offset-reset: earliest
+    producer:
+      acks: all
+  cloud:
+    bus:
+      destination: navio-config-bus
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+
+eureka:
+  client:
+    refresh:
+      enable: false
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    export:
+      zipkin:
+        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  file:
+    name: logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7
+
+server:
+  port: ${MOBILITY_SERVICE_PORT:8083}
+
+navio:
+  mobility:
+    providers:
+      google-maps:
+        api-key: ${GOOGLE_MAPS_SERVER_API_KEY:${GOOGLE_MAPS_API_KEY:}}
+        places:
+          base-url: ${GOOGLE_PLACES_BASE_URL:https://places.googleapis.com/v1}
+          connect-timeout: ${GOOGLE_PLACES_CONNECT_TIMEOUT:2s}
+          read-timeout: ${GOOGLE_PLACES_READ_TIMEOUT:4s}
+        routes:
+          base-url: ${GOOGLE_ROUTES_BASE_URL:https://routes.googleapis.com/directions/v2:computeRoutes}
+          connect-timeout: ${GOOGLE_ROUTES_CONNECT_TIMEOUT:2s}
+          read-timeout: ${GOOGLE_ROUTES_READ_TIMEOUT:8s}
+        cache:
+          place-fresh-ttl: ${GOOGLE_PLACES_CACHE_FRESH_TTL:15m}
+          place-stale-ttl: ${GOOGLE_PLACES_CACHE_STALE_TTL:24h}
+          route-fresh-ttl: ${GOOGLE_ROUTES_CACHE_FRESH_TTL:5m}
+          route-stale-ttl: ${GOOGLE_ROUTES_CACHE_STALE_TTL:30m}
+          maximum-size: ${GOOGLE_PROVIDER_CACHE_MAXIMUM_SIZE:10000}
+      mapbox:
+        access-token: ${MAPBOX_ACCESS_TOKEN:}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      googlePlaces:
+        sliding-window-type: count-based
+        sliding-window-size: 20
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+      googleRoutes:
+        sliding-window-type: count-based
+        sliding-window-size: 20
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+  # Without these, Spring Cloud CircuitBreaker applies its default 1s TimeLimiter,
+  # which aborts provider calls long before the HTTP client budgets below expire
+  # and trips the breaker on healthy-but-slow responses. Keep each value above the
+  # matching connect-timeout + read-timeout so the HTTP client stays the real limit.
+  timelimiter:
+    instances:
+      googlePlaces:
+        timeout-duration: ${GOOGLE_PLACES_CALL_TIMEOUT:7s}
+      googleRoutes:
+        timeout-duration: ${GOOGLE_ROUTES_CALL_TIMEOUT:11s}
