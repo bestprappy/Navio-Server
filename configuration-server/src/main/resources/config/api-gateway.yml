@@ -37,6 +37,14 @@ spring:
               uri: lb://user-management-service
               predicates:
                 - Path=/v1/users/**,/v1/admin/users/**
+            - id: mobility-and-ev-service
+              uri: lb://mobility-and-ev-service
+              predicates:
+                - Path=/v1/places/**,/v1/routes/**,/v1/geo/**,/v1/ev/**,/v1/chargers/**,/v1/admin/ev/**
+            - id: community-service
+              uri: lb://community-service
+              predicates:
+                - Path=/v1/community/**,/v1/groups/**,/v1/posts/**,/v1/feed/**,/v1/notifications/**,/v1/media/**
 
 eureka:
   client:
