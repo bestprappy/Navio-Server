@@ -1,27 +1,40 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/tripplanner
-    username: tripplanner
-    password: tripplanner
+    url: ${COMMUNITY_DB_URL:jdbc:postgresql://localhost:5432/tripplanner}
+    username: ${COMMUNITY_DB_USERNAME:tripplanner}
+    password: ${COMMUNITY_DB_PASSWORD:tripplanner}
   jpa:
     database: POSTGRESQL
     show-sql: false
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
+        default_schema: social
         format_sql: false
   flyway:
     enabled: true
     locations: classpath:db/migration
-    schemas: trip
-    default-schema: trip
+    schemas:
+      - social
+      - notif
+      - media
+    default-schema: social
     create-schemas: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=10m
+  servlet:
+    multipart:
+      max-file-size: ${COMMUNITY_MAX_FILE_SIZE:10MB}
+      max-request-size: ${COMMUNITY_MAX_REQUEST_SIZE:12MB}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     consumer:
-      group-id: trip-planning-service
+      group-id: community-service
       auto-offset-reset: earliest
     producer:
       acks: all
@@ -32,25 +45,17 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
-  cache:
-    cache-names: currencyRates
-    caffeine:
-      spec: maximumSize=32,expireAfterWrite=12h,recordStats
-
-navio:
-  currency-provider:
-    base-url: ${CURRENCY_PROVIDER_BASE_URL:https://api.frankfurter.dev}
-  mobility:
-    base-url: ${MOBILITY_SERVICE_BASE_URL:http://localhost:8083}
 
 eureka:
   client:
     refresh:
       enable: false
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
+    healthcheck:
+      enabled: true
   instance:
     prefer-ip-address: true
 
@@ -62,13 +67,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics,prometheus
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
     export:
       zipkin:
-        endpoint: http://localhost:9411/api/v2/spans
+        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
   prometheus:
     metrics:
       export:
@@ -83,7 +93,9 @@ logging:
       max-history: 7
 
 server:
-  port: 8082
+  port: ${COMMUNITY_SERVICE_PORT:8084}
 
-app:
-  message: "Hello Reference"
+navio:
+  community:
+    media:
+      storage-path: ${COMMUNITY_MEDIA_STORAGE_PATH:./data/community-media}

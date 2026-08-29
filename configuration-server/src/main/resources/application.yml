@@ -13,7 +13,7 @@ spring:
     config:
       server:
         native:
-          search-locations: C:\Users\User\Desktop\Full Stack\Capstone\Navio\server\configuration-server\src\main\resources\config
+          search-locations: classpath:/config
 
 server:
   port: 8888

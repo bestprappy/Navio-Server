@@ -4,3 +4,9 @@
 [submodule "trip-planning-service"]
 	path = trip-planning-service
 	url = https://github.com/bestprappy/Trip-Planning-Service.git
+[submodule "mobility-and-ev-service"]
+	path = mobility-and-ev-service
+	url = https://github.com/bestprappy/Mobility-and-EV-Service.git
+[submodule "community-service"]
+	path = community-service
+	url = https://github.com/bestprappy/Community-Service.git
