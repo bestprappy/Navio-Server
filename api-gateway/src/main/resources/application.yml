@@ -4,6 +4,25 @@ spring:
   config:
     import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}
 
+navio:
+  security:
+    keycloak:
+      # The gateway validates every inbound token against this realm before
+      # deriving the identity headers downstream services consume.
+      issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/navio}
+      # Requires an Audience protocol mapper on the Keycloak client; without one
+      # Keycloak emits only "aud": "account" and all tokens are rejected.
+      audiences: ${KEYCLOAK_AUDIENCES:navio-api}
+      clock-skew: 30s
+
+server:
+  # Resolve the real client IP from the proxy in front of the gateway, so
+  # downstream audit logs record the caller rather than the proxy.
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-stacktrace: never
+
 management:
   metrics:
     distribution:
@@ -12,14 +31,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics,prometheus
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: never
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
     export:
       zipkin:
-        endpoint: http://localhost:9411/api/v2/spans
+        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
   prometheus:
     metrics:
       export:
         enabled: true
+
+logging:
+  level:
+    org.springframework.security: INFO

@@ -1,29 +1,48 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/tripplanner
-    username: tripplanner
-    password: tripplanner
+    url: ${USER_DB_URL:jdbc:postgresql://postgres:5432/tripplanner}
+    username: ${USER_DB_USERNAME:tripplanner}
+    # No default. A committed fallback password becomes the production password
+    # on the day someone forgets to set the variable.
+    password: ${USER_DB_PASSWORD}
   jpa:
     database: POSTGRESQL
     show-sql: false
     hibernate:
-      ddl-auto: update
+      # Flyway owns the schema; Hibernate only checks the mapping matches.
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
     properties:
       hibernate:
         format_sql: false
+  flyway:
+    enabled: true
+    schemas: iam
+    default-schema: iam
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
       group-id: user-management-service
       auto-offset-reset: earliest
     producer:
       acks: all
 
+navio:
+  security:
+    keycloak:
+      issuer-uri: ${KEYCLOAK_ISSUER_URI}
+      audiences: ${KEYCLOAK_AUDIENCES:navio-api}
+      admin:
+        base-url: ${KEYCLOAK_BASE_URL}
+        realm: ${KEYCLOAK_REALM:navio}
+        client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:navio-user-management}
+        client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
 
@@ -35,13 +54,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics,prometheus
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: never
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
     export:
       zipkin:
-        endpoint: http://localhost:9411/api/v2/spans
+        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
   prometheus:
     metrics:
       export:
@@ -57,6 +79,10 @@ logging:
 
 server:
   port: 8081
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-stacktrace: never
 
 app:
   message: "User Management Service"
