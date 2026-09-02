@@ -60,14 +60,17 @@ public class GatewaySecurityConfig {
     };
 
     private final String issuerUri;
+    private final String jwkSetUri;
     private final List<String> audiences;
     private final Duration clockSkew;
 
     public GatewaySecurityConfig(
             @Value("${navio.security.keycloak.issuer-uri}") String issuerUri,
+            @Value("${navio.security.keycloak.jwk-set-uri:}") String jwkSetUri,
             @Value("${navio.security.keycloak.audiences}") List<String> audiences,
             @Value("${navio.security.keycloak.clock-skew:30s}") Duration clockSkew) {
         this.issuerUri = issuerUri;
+        this.jwkSetUri = jwkSetUri;
         this.audiences = List.copyOf(audiences);
         this.clockSkew = clockSkew;
     }
@@ -100,11 +103,19 @@ public class GatewaySecurityConfig {
      * <p>Audience validation matters as much here as in the resource services:
      * without it, a token minted for any other client in the realm would pass the
      * gateway and be converted into trusted identity headers.
+     *
+     * <p>{@code jwk-set-uri} overrides where signing keys come from. Discovery on
+     * the public issuer is a network call made while this bean is created, and in
+     * the deployed stack that issuer resolves through NGINX, which cannot start
+     * until this gateway is healthy. Pointing the key source at Keycloak directly
+     * breaks that cycle. {@code iss} is still validated against the public issuer
+     * below, so the set of accepted tokens is unchanged.
      */
     @Bean
     public ReactiveJwtDecoder jwtDecoder() {
-        NimbusReactiveJwtDecoder decoder =
-                (NimbusReactiveJwtDecoder) ReactiveJwtDecoders.fromIssuerLocation(issuerUri);
+        NimbusReactiveJwtDecoder decoder = jwkSetUri != null && !jwkSetUri.isBlank()
+                ? NimbusReactiveJwtDecoder.withJwkSetUri(jwkSetUri).build()
+                : (NimbusReactiveJwtDecoder) ReactiveJwtDecoders.fromIssuerLocation(issuerUri);
 
         OAuth2TokenValidator<Jwt> timestamps = new JwtTimestampValidator(clockSkew);
         OAuth2TokenValidator<Jwt> issuer = new JwtIssuerValidator(issuerUri);
