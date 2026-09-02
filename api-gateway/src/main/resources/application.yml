@@ -10,6 +10,11 @@ navio:
       # The gateway validates every inbound token against this realm before
       # deriving the identity headers downstream services consume.
       issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/navio}
+      # Optional. When set, signing keys come from here instead of discovering
+      # the public issuer, which in the deployed stack resolves through NGINX —
+      # and NGINX only starts once this gateway is healthy. 'iss' is still
+      # validated against issuer-uri, so accepted tokens are unchanged.
+      jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:}
       # Requires an Audience protocol mapper on the Keycloak client; without one
       # Keycloak emits only "aud": "account" and all tokens are rejected.
       audiences: ${KEYCLOAK_AUDIENCES:navio-api}
