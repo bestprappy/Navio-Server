@@ -16,9 +16,10 @@ spring:
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowedOrigins:
-                  - "http://localhost:3000"
-                  - "http://localhost:3001"
+                # Explicit origins only. A wildcard here combined with
+                # allowCredentials would let any site issue credentialed
+                # cross-origin calls on a signed-in user's behalf.
+                allowedOrigins: ${NAVIO_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
                 allowedMethods:
                   - GET
                   - POST
@@ -26,8 +27,17 @@ spring:
                   - DELETE
                   - PATCH
                   - OPTIONS
-                allowedHeaders: "*"
+                # Enumerated rather than "*": the wildcard is invalid alongside
+                # allowCredentials per the CORS spec, and listing headers keeps
+                # the preflight contract explicit.
+                allowedHeaders:
+                  - Authorization
+                  - Content-Type
+                  - Accept
+                  - Accept-Language
+                  - X-Requested-With
                 allowCredentials: true
+                maxAge: 3600
           routes:
             - id: trip-planning-service
               uri: lb://trip-planning-service
@@ -46,12 +56,23 @@ spring:
               predicates:
                 - Path=/v1/community/**,/v1/groups/**,/v1/posts/**,/v1/feed/**,/v1/notifications/**,/v1/media/**
 
+navio:
+  security:
+    keycloak:
+      # The gateway is the trust boundary: it validates every token here before
+      # IdentityPropagationFilter derives the X-User-Id header that downstream
+      # services consume. That header is stripped from inbound requests first,
+      # so a client can no longer forge it.
+      issuer-uri: ${KEYCLOAK_ISSUER_URI}
+      audiences: ${KEYCLOAK_AUDIENCES:navio-api}
+      clock-skew: 30s
+
 eureka:
   client:
     refresh:
       enable: false
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
   instance:
