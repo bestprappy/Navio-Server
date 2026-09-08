@@ -38,7 +38,7 @@ import java.util.Set;
  * The gateway's trust boundary.
  *
  * <p>Replaces the previous {@code JwtAuthFilter}, which was disabled and whose
- * body was a {@code TODO} — it checked only that the header began with
+ * body was a {@code TODO} â€” it checked only that the header began with
  * {@code "Bearer "}, so any string of characters passed. Nothing in the system
  * verified a Keycloak signature.
  *
@@ -87,6 +87,9 @@ public class GatewaySecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(PUBLIC_PATHS).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
+                        .pathMatchers(HttpMethod.GET, "/v1/groups", "/v1/groups/search",
+                                "/v1/groups/{slug}").permitAll()
                         // Deny by default: a newly routed service is protected
                         // even if nobody remembers to add a rule for it.
                         .anyExchange().authenticated())
