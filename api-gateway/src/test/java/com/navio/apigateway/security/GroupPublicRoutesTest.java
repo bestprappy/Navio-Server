@@ -24,7 +24,7 @@ class GroupPublicRoutesTest {
     WebTestClient client;
     @BeforeEach void setup() { client = WebTestClient.bindToApplicationContext(context).build(); }
     @Test void guestsCanOnlyUsePublicGroupReads() {
-        for (String path : new String[]{"/v1/groups", "/v1/groups/search?q=ev", "/v1/groups/thailand-ev-charging"}) {
+        for (String path : new String[]{"/v1/groups", "/v1/groups/search?q=ev", "/v1/groups/thailand-ev-charging", "/v1/groups/ev/banner"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
         for (String path : new String[]{"/v1/groups/mine", "/v1/groups/ev/members", "/v1/groups/ev/moderators", "/v1/trips"}) {
@@ -34,6 +34,7 @@ class GroupPublicRoutesTest {
             client.method(method).uri("/v1/groups/ev").exchange().expectStatus().isUnauthorized();
         }
         client.post().uri("/v1/groups").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
     }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {

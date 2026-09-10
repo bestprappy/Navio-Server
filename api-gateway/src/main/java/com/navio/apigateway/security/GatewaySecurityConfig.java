@@ -89,7 +89,7 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
                         .pathMatchers(HttpMethod.GET, "/v1/groups", "/v1/groups/search",
-                                "/v1/groups/{slug}").permitAll()
+                                "/v1/groups/{slug}", "/v1/groups/{slug}/banner").permitAll()
                         // Deny by default: a newly routed service is protected
                         // even if nobody remembers to add a rule for it.
                         .anyExchange().authenticated())
