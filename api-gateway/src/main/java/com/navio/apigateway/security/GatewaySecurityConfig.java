@@ -88,6 +88,8 @@ public class GatewaySecurityConfig {
                         .pathMatchers(PUBLIC_PATHS).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
+                        .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
+                                "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups", "/v1/groups/search",
                                 "/v1/groups/{slug}", "/v1/groups/{slug}/banner").permitAll()
                         // Deny by default: a newly routed service is protected

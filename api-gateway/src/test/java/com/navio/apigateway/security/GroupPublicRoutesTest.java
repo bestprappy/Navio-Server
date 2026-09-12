@@ -36,6 +36,18 @@ class GroupPublicRoutesTest {
         client.post().uri("/v1/groups").exchange().expectStatus().isUnauthorized();
         client.post().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
     }
+    @Test void postReadsArePublicButAllPostAndPictureMutationsRequireAuthentication() {
+        String post = "/v1/posts/00000000-0000-4000-8000-000000000001";
+        for (String path : new String[]{"/v1/posts", post, post+"/image", post+"/comments"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+        }
+        for (String path : new String[]{"/v1/posts", post, post+"/vote", post+"/comments", post+"/comments/id/vote", "/v1/users/me/picture"}) {
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST,HttpMethod.PATCH,HttpMethod.PUT,HttpMethod.DELETE}) {
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+            }
+        }
+        client.delete().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
+    }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {
         @Bean static org.springframework.core.convert.ConversionService conversionService() {
