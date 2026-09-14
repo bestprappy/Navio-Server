@@ -48,6 +48,23 @@ class GroupPublicRoutesTest {
         }
         client.delete().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
     }
+    @Test void guestsCanPlanButCannotReadOrWriteAccountData() {
+        for (String path : new String[]{"/v1/geo/places/autocomplete?q=Bangkok", "/v1/geo/places/search",
+                "/v1/geo/places/nearby", "/v1/geo/places/ChIJexample", "/v1/ev/chargers/near",
+                "/v1/trips/currencies/rate?base=THB&quote=USD"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+        }
+        client.post().uri("/v1/routes/directions").exchange().expectStatus().isOk();
+        for (String path : new String[]{"/v1/trips", "/v1/trips/trip-id", "/v1/trips/trip-id/planner",
+                "/v1/users/me/vehicles", "/v1/users/me/places", "/internal/v1/ev-route"}) {
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
+                    HttpMethod.PATCH, HttpMethod.DELETE}) {
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+            }
+        }
+        client.post().uri("/v1/geo/places/search").exchange().expectStatus().isUnauthorized();
+        client.delete().uri("/v1/routes/directions").exchange().expectStatus().isUnauthorized();
+    }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {
         @Bean static org.springframework.core.convert.ConversionService conversionService() {
