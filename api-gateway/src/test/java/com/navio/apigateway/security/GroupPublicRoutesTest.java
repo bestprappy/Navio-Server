@@ -65,6 +65,18 @@ class GroupPublicRoutesTest {
         client.post().uri("/v1/geo/places/search").exchange().expectStatus().isUnauthorized();
         client.delete().uri("/v1/routes/directions").exchange().expectStatus().isUnauthorized();
     }
+    @Test void onlyCatalogueGetIsPublicWithinTheVehicleApi() {
+        String base = "/v1/users/me/vehicles";
+        client.get().uri(base + "/catalog").exchange().expectStatus().isOk();
+        for (String path : new String[]{base, base + "/vehicle-id", "/v1/users/other/vehicles", "/v1/users/me"}) {
+            client.get().uri(path).exchange().expectStatus().isUnauthorized();
+        }
+        for (String path : new String[]{base, base + "/catalog", base + "/catalog/example", base + "/vehicle-id"}) {
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE}) {
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+            }
+        }
+    }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {
         @Bean static org.springframework.core.convert.ConversionService conversionService() {
