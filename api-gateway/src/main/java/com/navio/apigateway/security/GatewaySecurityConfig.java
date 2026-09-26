@@ -92,6 +92,20 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/v1/geo/places/{placeId}",
                                 "/v1/ev/chargers/near", "/v1/trips/currencies/rate").permitAll()
                         .pathMatchers(HttpMethod.POST, "/v1/routes/directions").permitAll()
+                        // A plan the owner published as a link. GET and one
+                        // path segment only: the token in {token} is the sole
+                        // credential, so this rule must not extend to a second
+                        // segment (no sub-resources), to any other verb (no
+                        // anonymous writes), or to /v1/trips/** where the
+                        // private originals live. Everything reachable through
+                        // it is pre-sanitised by PlanPublicationSanitizer,
+                        // which is the whole of the check on this route.
+                        //
+                        // The bare collection is the Explore feed: plans whose
+                        // owners separately opted into listing. Exact path, GET
+                        // only; page/size are query parameters, capped by the
+                        // service.
+                        .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
                         .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
                                 "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()
