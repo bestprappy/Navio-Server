@@ -42,7 +42,7 @@ spring:
             - id: trip-planning-service
               uri: lb://trip-planning-service
               predicates:
-                - Path=/v1/trips/**,/v1/public-trips/**,/v1/share/**
+                - Path=/v1/trips/**,/v1/public-trips/**,/v1/share/**,/v1/shared-plans/**
             - id: user-management-service
               uri: lb://user-management-service
               predicates:
