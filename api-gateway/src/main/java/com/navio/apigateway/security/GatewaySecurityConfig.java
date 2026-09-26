@@ -87,6 +87,7 @@ public class GatewaySecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(PUBLIC_PATHS).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/v1/vehicle-models", "/v1/vehicle-models/{id}").permitAll()
                         // Guest itineraries live in the browser. Only the data
                         // and computation needed to build them are public.
                         .pathMatchers(HttpMethod.GET, "/v1/geo/places/{placeId}",
