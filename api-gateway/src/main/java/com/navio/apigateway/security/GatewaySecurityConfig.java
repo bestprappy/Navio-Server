@@ -181,7 +181,7 @@ public class GatewaySecurityConfig {
      */
     static class KeycloakRealmRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
-        private static final Set<String> NAVIO_ROLES = Set.of("USER", "MODERATOR", "ADMIN");
+        private static final Set<String> NAVIO_ROLES = Set.of("USER", "MODERATOR", "ADMIN", "OWNER");
         private static final String REALM_ACCESS = "realm_access";
         private static final String RESOURCE_ACCESS = "resource_access";
         private static final String ROLES = "roles";
