@@ -77,6 +77,38 @@ class GroupPublicRoutesTest {
             }
         }
     }
+    @Test void guestsCanReadSharedPlansAndTheExploreFeedButNothingElseOnThatPrefix() {
+        for (String path : new String[]{"/v1/shared-plans", "/v1/shared-plans?page=1&size=20",
+                "/v1/shared-plans/tok-abc"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+        }
+        // No second segment: a sub-resource under a token is never anonymous.
+        client.get().uri("/v1/shared-plans/tok-abc/copies").exchange().expectStatus().isUnauthorized();
+        for (String path : new String[]{"/v1/shared-plans", "/v1/shared-plans/tok-abc"}) {
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
+                    HttpMethod.PATCH, HttpMethod.DELETE}) {
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+            }
+        }
+        // Owner management of the link and the Explore listing stays authenticated.
+        for (HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.PUT,
+                HttpMethod.PATCH, HttpMethod.DELETE}) {
+            client.method(method).uri("/v1/trips/trip-id/publication").exchange().expectStatus().isUnauthorized();
+        }
+    }
+    @Test void guestsCanReadOnlyPublishedVehicleCatalogRoutes() {
+        for (String path : new String[]{"/v1/vehicle-models", "/v1/vehicle-models?market=TH",
+                "/v1/vehicle-models/catalog-id"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+        }
+        client.get().uri("/v1/vehicle-models/catalog-id/private").exchange().expectStatus().isUnauthorized();
+        for (String path : new String[]{"/v1/vehicle-models", "/v1/vehicle-models/catalog-id"})
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
+                    HttpMethod.PATCH, HttpMethod.DELETE})
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/admin/audit-events").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/admin/vehicle-models").exchange().expectStatus().isUnauthorized();
+    }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {
         @Bean static org.springframework.core.convert.ConversionService conversionService() {
