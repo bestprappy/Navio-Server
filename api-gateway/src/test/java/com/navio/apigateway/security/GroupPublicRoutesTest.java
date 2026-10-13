@@ -109,6 +109,20 @@ class GroupPublicRoutesTest {
         client.get().uri("/v1/admin/audit-events").exchange().expectStatus().isUnauthorized();
         client.get().uri("/v1/admin/vehicle-models").exchange().expectStatus().isUnauthorized();
     }
+    @Test void guestsCanReadOnlyPublishedGuides() {
+        for (String path : new String[]{"/v1/guides", "/v1/guides?page=0&size=50",
+                "/v1/guides/8f2b6c1e-5d3a-4c7b-9e1f-2a6d4b8c0e01"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+        }
+        client.get().uri("/v1/guides/guide-id/draft").exchange().expectStatus().isUnauthorized();
+        for (String path : new String[]{"/v1/guides", "/v1/guides/guide-id"})
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
+                    HttpMethod.PATCH, HttpMethod.DELETE})
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+        for (String path : new String[]{"/v1/admin/guides", "/v1/admin/guides/guide-id"})
+            client.get().uri(path).exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/admin/guides").exchange().expectStatus().isUnauthorized();
+    }
     @Configuration @EnableWebFlux @Import(GatewaySecurityConfig.class)
     static class Config {
         @Bean static org.springframework.core.convert.ConversionService conversionService() {
