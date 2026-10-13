@@ -91,7 +91,7 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/v1/vehicle-models", "/v1/vehicle-models/{id}").permitAll()
                         // Published destination guides. GET and one path segment only;
                         // drafts and every write live under /v1/admin/guides.
-                        .pathMatchers(HttpMethod.GET, "/v1/guides", "/v1/guides/{id}").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/v1/guides", "/v1/guides/{id}", "/v1/traveler-guides", "/v1/traveler-guides/{id}").permitAll()
                         // Guest itineraries live in the browser. Only the data
                         // and computation needed to build them are public.
                         .pathMatchers(HttpMethod.GET, "/v1/geo/places/{placeId}",
@@ -115,7 +115,7 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
                                 "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups", "/v1/groups/search",
-                                "/v1/groups/{slug}", "/v1/groups/{slug}/banner").permitAll()
+                                "/v1/groups/{slug}", "/v1/groups/{slug}/banner", "/v1/groups/{slug}/icon").permitAll()
                         // Deny by default: a newly routed service is protected
                         // even if nobody remembers to add a rule for it.
                         .anyExchange().authenticated())

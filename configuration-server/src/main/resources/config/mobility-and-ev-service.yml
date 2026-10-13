@@ -91,6 +91,12 @@ server:
 navio:
   mobility:
     providers:
+      otp:
+        enabled: ${NAVIO_OTP_ENABLED:false}
+        endpoint: ${NAVIO_OTP_ENDPOINT:http://localhost:8801/otp/gtfs/v1}
+        connect-timeout: ${NAVIO_OTP_CONNECT_TIMEOUT:2s}
+        read-timeout: ${NAVIO_OTP_READ_TIMEOUT:8s}
+        network-id: ${NAVIO_OTP_NETWORK_ID:local}
       google-maps:
         api-key: ${GOOGLE_MAPS_SERVER_API_KEY:${GOOGLE_MAPS_API_KEY:}}
         places:
@@ -113,6 +119,20 @@ navio:
 resilience4j:
   circuitbreaker:
     instances:
+      openTripPlanner:
+        sliding-window-type: count-based
+        sliding-window-size: 20
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+      googleTransit:
+        sliding-window-type: count-based
+        sliding-window-size: 20
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
       googlePlaces:
         sliding-window-type: count-based
         sliding-window-size: 20
@@ -133,6 +153,10 @@ resilience4j:
   # matching connect-timeout + read-timeout so the HTTP client stays the real limit.
   timelimiter:
     instances:
+      openTripPlanner:
+        timeout-duration: ${NAVIO_OTP_CALL_TIMEOUT:11s}
+      googleTransit:
+        timeout-duration: ${GOOGLE_ROUTES_CALL_TIMEOUT:11s}
       googlePlaces:
         timeout-duration: ${GOOGLE_PLACES_CALL_TIMEOUT:7s}
       googleRoutes:

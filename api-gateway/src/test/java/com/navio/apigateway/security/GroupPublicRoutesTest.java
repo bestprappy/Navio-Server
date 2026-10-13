@@ -24,7 +24,7 @@ class GroupPublicRoutesTest {
     WebTestClient client;
     @BeforeEach void setup() { client = WebTestClient.bindToApplicationContext(context).build(); }
     @Test void guestsCanOnlyUsePublicGroupReads() {
-        for (String path : new String[]{"/v1/groups", "/v1/groups/search?q=ev", "/v1/groups/thailand-ev-charging", "/v1/groups/ev/banner"}) {
+        for (String path : new String[]{"/v1/groups", "/v1/groups/search?q=ev", "/v1/groups/thailand-ev-charging", "/v1/groups/ev/banner", "/v1/groups/ev/icon"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
         for (String path : new String[]{"/v1/groups/mine", "/v1/groups/ev/members", "/v1/groups/ev/moderators", "/v1/trips"}) {
@@ -35,18 +35,20 @@ class GroupPublicRoutesTest {
         }
         client.post().uri("/v1/groups").exchange().expectStatus().isUnauthorized();
         client.post().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/groups/ev/icon").exchange().expectStatus().isUnauthorized();
     }
     @Test void postReadsArePublicButAllPostAndPictureMutationsRequireAuthentication() {
         String post = "/v1/posts/00000000-0000-4000-8000-000000000001";
         for (String path : new String[]{"/v1/posts", post, post+"/image", post+"/comments"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
-        for (String path : new String[]{"/v1/posts", post, post+"/vote", post+"/comments", post+"/comments/id/vote", "/v1/users/me/picture"}) {
+        for (String path : new String[]{"/v1/posts", post, post+"/vote", post+"/comments", post+"/comments/id/vote", post+"/comments/id/reactions/love", "/v1/users/me/picture"}) {
             for (HttpMethod method : new HttpMethod[]{HttpMethod.POST,HttpMethod.PATCH,HttpMethod.PUT,HttpMethod.DELETE}) {
                 client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
             }
         }
         client.delete().uri("/v1/groups/ev/banner").exchange().expectStatus().isUnauthorized();
+        client.delete().uri("/v1/groups/ev/icon").exchange().expectStatus().isUnauthorized();
     }
     @Test void guestsCanPlanButCannotReadOrWriteAccountData() {
         for (String path : new String[]{"/v1/geo/places/autocomplete?q=Bangkok", "/v1/geo/places/search",
@@ -110,12 +112,15 @@ class GroupPublicRoutesTest {
         client.get().uri("/v1/admin/vehicle-models").exchange().expectStatus().isUnauthorized();
     }
     @Test void guestsCanReadOnlyPublishedGuides() {
-        for (String path : new String[]{"/v1/guides", "/v1/guides?page=0&size=50",
+        for (String path : new String[]{"/v1/guides", "/v1/traveler-guides", "/v1/traveler-guides?term=Thailand", "/v1/traveler-guides/8f2b6c1e-5d3a-4c7b-9e1f-2a6d4b8c0e01", "/v1/guides?page=0&size=50",
                 "/v1/guides/8f2b6c1e-5d3a-4c7b-9e1f-2a6d4b8c0e01"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
+        client.get().uri("/v1/users/me/guides").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/users/me/guides").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/traveler-guides/guide-id/draft").exchange().expectStatus().isUnauthorized();
         client.get().uri("/v1/guides/guide-id/draft").exchange().expectStatus().isUnauthorized();
-        for (String path : new String[]{"/v1/guides", "/v1/guides/guide-id"})
+        for (String path : new String[]{"/v1/guides", "/v1/guides/guide-id", "/v1/traveler-guides", "/v1/traveler-guides/guide-id"})
             for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
                     HttpMethod.PATCH, HttpMethod.DELETE})
                 client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
