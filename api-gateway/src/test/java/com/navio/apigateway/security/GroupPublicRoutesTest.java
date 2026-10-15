@@ -20,6 +20,14 @@ import static org.mockito.Mockito.mock;
         "navio.security.keycloak.jwk-set-uri=https://issuer.example/jwks"
 })
 class GroupPublicRoutesTest {
+    @Test void exploreHasOnlyExactPublicGetRoutes() {
+        for (String path : new String[]{"/v1/geo/places/explore","/v1/geo/places/explore/suggestions"}) {
+            client.get().uri(path).exchange().expectStatus().isOk();
+            for (HttpMethod method : new HttpMethod[]{HttpMethod.POST,HttpMethod.PUT,HttpMethod.PATCH,HttpMethod.DELETE})
+                client.method(method).uri(path).exchange().expectStatus().isUnauthorized();
+        }
+        client.get().uri("/v1/geo/places/explore/suggestions/private").exchange().expectStatus().isUnauthorized();
+    }
     @Autowired ApplicationContext context;
     WebTestClient client;
     @BeforeEach void setup() { client = WebTestClient.bindToApplicationContext(context).build(); }
@@ -52,7 +60,7 @@ class GroupPublicRoutesTest {
     }
     @Test void guestsCanPlanButCannotReadOrWriteAccountData() {
         for (String path : new String[]{"/v1/geo/places/autocomplete?q=Bangkok", "/v1/geo/places/search",
-                "/v1/geo/places/nearby", "/v1/geo/places/ChIJexample", "/v1/ev/chargers/near",
+                "/v1/geo/places/nearby", "/v1/geo/places/discovery", "/v1/geo/places/ChIJexample/reader", "/v1/geo/places/ChIJexample", "/v1/ev/chargers/near",
                 "/v1/trips/currencies/rate?base=THB&quote=USD"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
@@ -65,6 +73,11 @@ class GroupPublicRoutesTest {
             }
         }
         client.post().uri("/v1/geo/places/search").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/geo/places/ChIJexample/reader/private").exchange().expectStatus().isUnauthorized();
+        for (HttpMethod method : new HttpMethod[]{HttpMethod.POST,HttpMethod.PATCH,HttpMethod.PUT,HttpMethod.DELETE}) {
+            client.method(method).uri("/v1/geo/places/discovery").exchange().expectStatus().isUnauthorized();
+            client.method(method).uri("/v1/geo/places/ChIJexample/reader").exchange().expectStatus().isUnauthorized();
+        }
         client.delete().uri("/v1/routes/directions").exchange().expectStatus().isUnauthorized();
     }
     @Test void onlyCatalogueGetIsPublicWithinTheVehicleApi() {
