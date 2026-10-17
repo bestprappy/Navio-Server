@@ -94,12 +94,15 @@ class GroupPublicRoutesTest {
     }
     @Test void guestsCanReadSharedPlansAndTheExploreFeedButNothingElseOnThatPrefix() {
         for (String path : new String[]{"/v1/shared-plans", "/v1/shared-plans?page=1&size=20",
-                "/v1/shared-plans/tok-abc"}) {
+                "/v1/shared-plans/tok-abc", "/v1/shared-plans/tok-abc/summary"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
-        // No second segment: a sub-resource under a token is never anonymous.
+        // No other second segment: only the named card lookup is anonymous.
         client.get().uri("/v1/shared-plans/tok-abc/copies").exchange().expectStatus().isUnauthorized();
-        for (String path : new String[]{"/v1/shared-plans", "/v1/shared-plans/tok-abc"}) {
+        client.get().uri("/v1/shared-plans/tok-abc/other").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/shared-plans/tok-abc/summary/extra").exchange().expectStatus().isUnauthorized();
+        for (String path : new String[]{"/v1/shared-plans", "/v1/shared-plans/tok-abc",
+                "/v1/shared-plans/tok-abc/summary"}) {
             for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
                     HttpMethod.PATCH, HttpMethod.DELETE}) {
                 client.method(method).uri(path).exchange().expectStatus().isUnauthorized();

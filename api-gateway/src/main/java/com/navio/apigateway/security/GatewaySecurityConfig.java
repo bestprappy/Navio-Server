@@ -111,7 +111,14 @@ public class GatewaySecurityConfig {
                         // owners separately opted into listing. Exact path, GET
                         // only; page/size are query parameters, capped by the
                         // service.
-                        .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}").permitAll()
+                        //
+                        // {token}/summary is the single named exception to "one
+                        // segment": the Explore card for one plan, used by
+                        // community post attachments. The service answers it
+                        // only for plans listed on Explore, whose cards and
+                        // tokens the feed above already serves to anyone.
+                        .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}",
+                                "/v1/shared-plans/{token}/summary").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
                         .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
                                 "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()
