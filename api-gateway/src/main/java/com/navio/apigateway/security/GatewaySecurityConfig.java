@@ -97,7 +97,8 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/v1/guides", "/v1/guides/{id}", "/v1/traveler-guides", "/v1/traveler-guides/{id}").permitAll()
                         // Guest itineraries live in the browser. Only the data
                         // and computation needed to build them are public.
-                        .pathMatchers(HttpMethod.GET, "/v1/geo/places/{placeId}",
+                        .pathMatchers(HttpMethod.GET, "/v1/geo/places/explore", "/v1/geo/places/explore/suggestions", "/v1/geo/places/discovery", "/v1/geo/places/{placeId}/reader",
+                                "/v1/geo/places/{placeId}",
                                 "/v1/ev/chargers/near", "/v1/trips/currencies/rate").permitAll()
                         .pathMatchers(HttpMethod.POST, "/v1/routes/directions").permitAll()
                         // A plan the owner published as a link. GET and one
@@ -113,7 +114,14 @@ public class GatewaySecurityConfig {
                         // owners separately opted into listing. Exact path, GET
                         // only; page/size are query parameters, capped by the
                         // service.
-                        .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}").permitAll()
+                        //
+                        // {token}/summary is the single named exception to "one
+                        // segment": the Explore card for one plan, used by
+                        // community post attachments. The service answers it
+                        // only for plans listed on Explore, whose cards and
+                        // tokens the feed above already serves to anyone.
+                        .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}",
+                                "/v1/shared-plans/{token}/summary").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
                         .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
                                 "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()
