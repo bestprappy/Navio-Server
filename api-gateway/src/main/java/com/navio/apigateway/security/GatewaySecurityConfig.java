@@ -121,7 +121,8 @@ public class GatewaySecurityConfig {
                         // only for plans listed on Explore, whose cards and
                         // tokens the feed above already serves to anyone.
                         .pathMatchers(HttpMethod.GET, "/v1/shared-plans", "/v1/shared-plans/{token}",
-                                "/v1/shared-plans/{token}/summary").permitAll()
+                                "/v1/shared-plans/{token}/summary",
+                                "/v1/shared-plans/{token}/feedback", "/v1/shared-plans/{token}/feedback/comments").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/groups/mine").authenticated()
                         .pathMatchers(HttpMethod.GET, "/v1/posts", "/v1/posts/{id}",
                                 "/v1/posts/{id}/image", "/v1/posts/{id}/comments").permitAll()

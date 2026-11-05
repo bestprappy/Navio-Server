@@ -20,6 +20,15 @@ import static org.mockito.Mockito.mock;
         "navio.security.keycloak.jwk-set-uri=https://issuer.example/jwks"
 })
 class GroupPublicRoutesTest {
+    @Test void planFeedbackReadsArePublicButEveryMutationAndReportsAreProtected() {
+        for(String path:new String[]{"/v1/shared-plans/token/feedback","/v1/shared-plans/token/feedback/comments"})
+            client.get().uri(path).exchange().expectStatus().isOk();
+        for(String path:new String[]{"/v1/shared-plans/token/feedback/rating","/v1/shared-plans/token/feedback/comments",
+                "/v1/shared-plans/token/feedback/comments/123","/v1/shared-plans/token/feedback/comments/123/reports"})
+            for(HttpMethod method:new HttpMethod[]{HttpMethod.POST,HttpMethod.PUT,HttpMethod.DELETE})
+                client.method(method).uri(path).header("X-User-Id","forged").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/shared-plans/token/feedback/reports").exchange().expectStatus().isUnauthorized();
+    }
     @Test void exploreHasOnlyExactPublicGetRoutes() {
         for (String path : new String[]{"/v1/geo/places/explore","/v1/geo/places/explore/suggestions"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
