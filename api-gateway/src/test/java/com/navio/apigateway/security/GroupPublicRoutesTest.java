@@ -20,6 +20,15 @@ import static org.mockito.Mockito.mock;
         "navio.security.keycloak.jwk-set-uri=https://issuer.example/jwks"
 })
 class GroupPublicRoutesTest {
+    @Test void guideFeedbackReadsAndReadEventsArePublicButContributionsStayProtected() {
+        for(String path:new String[]{"/v1/traveler-guides/discovery/CURATED/id/feedback","/v1/traveler-guides/discovery/TRAVELER/id/feedback/comments"})
+            client.get().uri(path).exchange().expectStatus().isOk();
+        client.post().uri("/v1/traveler-guides/discovery/CURATED/id/view").exchange().expectStatus().isOk();
+        for(String path:new String[]{"/v1/traveler-guides/discovery/CURATED/id/feedback/rating","/v1/traveler-guides/discovery/CURATED/id/feedback/comments","/v1/traveler-guides/discovery/CURATED/id/feedback/comments/comment/reports"})
+            client.post().uri(path).exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/traveler-guides/discovery/CURATED/id/feedback/reports").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/traveler-guides/discovery/CURATED/id/view/extra").exchange().expectStatus().isUnauthorized();
+    }
     @Test void planFeedbackReadsArePublicButEveryMutationAndReportsAreProtected() {
         for(String path:new String[]{"/v1/shared-plans/token/feedback","/v1/shared-plans/token/feedback/comments"})
             client.get().uri(path).exchange().expectStatus().isOk();

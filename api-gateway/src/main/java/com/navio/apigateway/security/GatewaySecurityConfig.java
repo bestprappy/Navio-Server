@@ -95,6 +95,8 @@ public class GatewaySecurityConfig {
                         // Published destination guides. GET and one path segment only;
                         // drafts and every write live under /v1/admin/guides.
                         .pathMatchers(HttpMethod.GET, "/v1/guides", "/v1/guides/{id}", "/v1/traveler-guides", "/v1/traveler-guides/{id}").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/v1/traveler-guides/discovery/{source}/{id}/feedback", "/v1/traveler-guides/discovery/{source}/{id}/feedback/comments").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/v1/traveler-guides/discovery/{source}/{id}/view").permitAll()
                         // Guest itineraries live in the browser. Only the data
                         // and computation needed to build them are public.
                         .pathMatchers(HttpMethod.GET, "/v1/geo/places/explore", "/v1/geo/places/explore/suggestions", "/v1/geo/places/discovery", "/v1/geo/places/{placeId}/reader",
