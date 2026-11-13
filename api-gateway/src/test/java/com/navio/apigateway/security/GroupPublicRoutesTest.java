@@ -38,6 +38,10 @@ class GroupPublicRoutesTest {
                 client.method(method).uri(path).header("X-User-Id","forged").exchange().expectStatus().isUnauthorized();
         client.get().uri("/v1/shared-plans/token/feedback/reports").exchange().expectStatus().isUnauthorized();
     }
+    @Test void googleUsageReportRefusesAnonymousCallersEvenWithForgedRoles() {
+        client.get().uri("/v1/admin/ev/google-usage").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/admin/ev/google-usage").header("X-User-Roles","ADMIN").exchange().expectStatus().isUnauthorized();
+    }
     @Test void exploreHasOnlyExactPublicGetRoutes() {
         for (String path : new String[]{"/v1/geo/places/explore","/v1/geo/places/explore/suggestions"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
