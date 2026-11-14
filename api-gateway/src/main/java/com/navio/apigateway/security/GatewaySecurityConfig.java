@@ -94,6 +94,8 @@ public class GatewaySecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/v1/palette-colors").permitAll()
                         // Published destination guides. GET and one path segment only;
                         // drafts and every write live under /v1/admin/guides.
+                        .pathMatchers(HttpMethod.GET, "/v1/saved-content/favorites").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/v1/shared-plans/{token}/feedback/view").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/guides", "/v1/guides/{id}", "/v1/traveler-guides", "/v1/traveler-guides/{id}").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/traveler-guides/discovery/{source}/{id}/feedback", "/v1/traveler-guides/discovery/{source}/{id}/feedback/comments").permitAll()
                         .pathMatchers(HttpMethod.POST, "/v1/traveler-guides/discovery/{source}/{id}/view").permitAll()

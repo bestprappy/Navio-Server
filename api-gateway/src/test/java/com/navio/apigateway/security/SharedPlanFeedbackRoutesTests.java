@@ -25,7 +25,7 @@ class SharedPlanFeedbackRoutesTests {
     }
     private void assertFeedbackPaths(Path config) throws Exception {
         var patterns=patterns(config).stream().map(PathPatternParser.defaultInstance::parse).toList();
-        for(String suffix:List.of("","/rating","/comments","/comments/123","/comments/123/reports","/reports")){
+        for(String suffix:List.of("","/view","/rating","/comments","/comments/123","/comments/123/reports","/reports")){
             String path="/v1/shared-plans/test-token/feedback"+suffix;
             assertThat(patterns.stream().anyMatch(p->p.matches(PathContainer.parsePath(path))))
                 .as("%s must forward %s",config,path).isTrue();
