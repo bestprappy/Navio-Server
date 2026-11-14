@@ -20,6 +20,13 @@ import static org.mockito.Mockito.mock;
         "navio.security.keycloak.jwk-set-uri=https://issuer.example/jwks"
 })
 class GroupPublicRoutesTest {
+    @Test void readerMetricsExposeOnlyAggregateReadsAndBoundedReadEvents() {
+        client.get().uri("/v1/saved-content/favorites?identity=plan:token").exchange().expectStatus().isOk();
+        client.post().uri("/v1/shared-plans/token/feedback/view").exchange().expectStatus().isOk();
+        for(String path:new String[]{"/v1/saved-content/favorites","/v1/shared-plans/token/feedback/view/extra"})
+            client.post().uri(path).header("X-User-Id","forged").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/saved-content/favorites/private").exchange().expectStatus().isUnauthorized();
+    }
     @Test void guideFeedbackReadsAndReadEventsArePublicButContributionsStayProtected() {
         for(String path:new String[]{"/v1/traveler-guides/discovery/CURATED/id/feedback","/v1/traveler-guides/discovery/TRAVELER/id/feedback/comments"})
             client.get().uri(path).exchange().expectStatus().isOk();
