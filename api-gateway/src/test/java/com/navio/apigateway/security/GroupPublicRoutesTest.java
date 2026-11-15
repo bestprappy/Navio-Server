@@ -148,7 +148,11 @@ class GroupPublicRoutesTest {
                 "/v1/vehicle-models/catalog-id"}) {
             client.get().uri(path).exchange().expectStatus().isOk();
         }
+        client.get().uri("/v1/vehicle-models/images/6f1c2f1e-8a54-4a0c-9f7e-1c2d3e4f5a6b").exchange().expectStatus().isOk();
         client.get().uri("/v1/vehicle-models/catalog-id/private").exchange().expectStatus().isUnauthorized();
+        client.get().uri("/v1/vehicle-models/images/photo/extra").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/vehicle-models/images/6f1c2f1e-8a54-4a0c-9f7e-1c2d3e4f5a6b").exchange().expectStatus().isUnauthorized();
+        client.post().uri("/v1/admin/vehicle-models/images").exchange().expectStatus().isUnauthorized();
         for (String path : new String[]{"/v1/vehicle-models", "/v1/vehicle-models/catalog-id"})
             for (HttpMethod method : new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT,
                     HttpMethod.PATCH, HttpMethod.DELETE})

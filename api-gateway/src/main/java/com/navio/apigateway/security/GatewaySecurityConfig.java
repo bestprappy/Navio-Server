@@ -88,7 +88,7 @@ public class GatewaySecurityConfig {
                         .pathMatchers(PUBLIC_PATHS).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/v1/users/me/vehicles/catalog").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/v1/vehicle-models", "/v1/vehicle-models/{id}").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/v1/vehicle-models", "/v1/vehicle-models/{id}", "/v1/vehicle-models/images/{imageId}").permitAll()
                         // The color palette, so guests read shared plans in their owner's colors.
                         // GET on the exact path only; every change lives under /v1/admin/palette-colors.
                         .pathMatchers(HttpMethod.GET, "/v1/palette-colors").permitAll()
